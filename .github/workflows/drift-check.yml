@@ -1,0 +1,23 @@
+name: Architecture drift check
+
+on:
+  push:
+    paths:
+      - "examples/**/*.py"
+      - "specsync/**/*.py"
+  pull_request:
+    paths:
+      - "examples/**/*.py"
+      - "specsync/**/*.py"
+
+jobs:
+  drift-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e .
+      - name: Check architecture.puml matches code
+        run: python -m specsync.check_drift examples/inspectai_backend --spec examples/inspectai_backend_architecture.puml

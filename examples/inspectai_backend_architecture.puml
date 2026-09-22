@@ -1,0 +1,80 @@
+@startuml
+skinparam componentStyle rectangle
+
+package "(root)" {
+  [app]
+  [config]
+}
+
+package "agents" {
+  [agents.orchestrator]
+  [agents.rca_agent]
+  [agents.vision_agent]
+}
+
+package "api" {
+  [api.middleware]
+  [api.routes.chat]
+  [api.routes.health]
+  [api.routes.inspect]
+  [api.routes.mlops]
+}
+
+package "mlops" {
+  [mlops.evaluation]
+  [mlops.logger]
+  [mlops.metrics]
+}
+
+package "rag" {
+  [rag.embeddings]
+  [rag.pipeline]
+  [rag.reranker]
+  [rag.retriever]
+  [rag.vectorstore]
+}
+
+package "tests" {
+  [tests.eval_retrieval]
+}
+
+package "vision" {
+  [vision.classifier]
+  [vision.detector]
+  [vision.preprocessor]
+}
+
+[agents.orchestrator] --> [agents.rca_agent]
+[agents.orchestrator] --> [rag.pipeline]
+[agents.rca_agent] --> [config]
+[api.routes.chat] --> [rag.pipeline]
+[api.routes.inspect] --> [agents.orchestrator]
+[api.routes.inspect] --> [mlops.logger]
+[api.routes.inspect] --> [mlops.metrics]
+[api.routes.inspect] --> [vision.detector]
+[api.routes.inspect] --> [vision.preprocessor]
+[api.routes.mlops] --> [mlops.logger]
+[app] --> [api.routes.chat]
+[app] --> [api.routes.health]
+[app] --> [api.routes.inspect]
+[app] --> [api.routes.mlops]
+[app] --> [config]
+[app] --> [rag.embeddings]
+[app] --> [rag.reranker]
+[app] --> [rag.vectorstore]
+[app] --> [vision.detector]
+[mlops.logger] --> [config]
+[rag.embeddings] --> [config]
+[rag.pipeline] --> [config]
+[rag.pipeline] --> [rag.reranker]
+[rag.pipeline] --> [rag.retriever]
+[rag.reranker] --> [config]
+[rag.retriever] --> [config]
+[rag.retriever] --> [rag.vectorstore]
+[rag.vectorstore] --> [config]
+[rag.vectorstore] --> [rag.embeddings]
+[tests.eval_retrieval] --> [rag.embeddings]
+[tests.eval_retrieval] --> [rag.retriever]
+[vision.classifier] --> [vision.detector]
+[vision.detector] --> [config]
+@enduml
